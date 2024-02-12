@@ -1,0 +1,90 @@
+<div class="courier_Form" *ngIf="!formSubmitted && showForm">
+    <div class="heading">
+        <h1>Request a Courier Pickup!</h1>
+        <span>
+            <h3>NEW</h3>
+        </span>
+    </div>
+    <div class="forms">
+        <form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
+            <div class="first">
+                <input type="text" formControlName="name" placeholder="Enter your name">
+                <input type="text" formControlName="mobile" placeholder="Enter your mobile number">
+            </div>
+            <div class="err_msg d-flex">
+                <div *ngIf="orderForm.get('name')?.invalid && (orderForm.get('name')?.touched || isSubmitted)"
+                    class="text-danger namedanger">
+                    Name is required.
+                </div>
+                <div *ngIf="orderForm.get('mobile')?.errors?.['required'] && (orderForm.get('mobile')?.touched || isSubmitted)"
+                class="text-danger mobdanger">
+                Mobile is required.
+            </div>
+            <div *ngIf="orderForm.get('mobile')?.errors?.['pattern'] && orderForm.get('mobile')?.touched"
+                class="text-danger mobdanger">
+                Mobile must be a 10-digit number.
+            </div>
+            </div>
+            <div class="middle">
+                <input type="datetime-local" formControlName="pickupDateTime">
+                <div *ngIf="orderForm.get('pickupDateTime')?.invalid && (orderForm.get('pickupDateTime')?.touched || isSubmitted)"
+                    class="text-danger displace">
+                    Pickup date and time are required.
+                </div>
+            </div>
+            <div class="middle1">
+                <textarea formControlName="address" placeholder="Enter your pickup address"></textarea>
+                <div *ngIf="orderForm.get('address')?.invalid && (orderForm.get('address')?.touched || isSubmitted)"
+                    class="text-danger displace">
+                    Address is required.
+                </div>
+            </div>
+            <div class="terms">
+                <input type="checkbox" formControlName="termsAccepted" id="terms-checkbox">
+                <label for="terms-checkbox">I accept the terms and conditions</label>
+                <div *ngIf="orderForm.get('termsAccepted')?.invalid && (orderForm.get('termsAccepted')?.touched || isSubmitted)"
+                    class="text-danger displace">
+                    You must accept the terms and conditions.
+                </div>
+            </div>
+            <div class="button1">
+                <button type="submit" class="btn btnn">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+<app-toastcomp *ngIf="formSubmitted && orderForm.valid" [form1]="showForm" [header]="'Form submitted Successfully!'"
+    [message]="names" (goBackEvent)="handleGoBack()"></app-toastcomp>
+<div *ngIf="showFinalForm" class="finalform">
+    <div class="head">
+        <h1>Courier Request</h1>
+        <span>
+            <h3>{{ numberOfItems }}</h3>
+        </span>
+    </div>
+    <div class="container tab">
+        <table class="table tables" #dataTable>
+            <thead>
+                <tr>
+                    <th>CNO</th>
+                    <th>Customer</th>
+                    <th>Mobile</th>
+                    <th>Pickup Date & Time</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of orderFormData; index as i">
+                    <td>{{i +1}}</td>
+                    <td>{{ data.name }}</td>
+                    <td>{{ data.mobile}}</td>
+                    <td>{{ data.pickupDateTime | date: 'medium'}}</td>
+                    <td class="address">{{ data.address}}</td>
+                    <td><button class="btn btn-danger mx-4"(click) = deleteItem(i)>Delete</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
